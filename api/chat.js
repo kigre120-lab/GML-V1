@@ -1,6 +1,13 @@
 // Vercel Serverless Function - 面试对话接口
+// 火山引擎 API（OpenAI 兼容）
 
 const axios = require('axios')
+
+// 火山引擎 API 配置
+const API_CONFIG = {
+  baseUrl: 'https://ark.cn-beijing.volces.com/api/coding/v3/chat/completions',
+  model: 'ark-code-latest'
+}
 
 module.exports = async function handler(req, res) {
   // 允许跨域
@@ -20,19 +27,18 @@ module.exports = async function handler(req, res) {
     const { history, messages } = req.body
     const messageList = history || messages || []
 
-    // 检查 API Key
+    // 获取 API Key
     const apiKey = process.env.DEEPSEEK_API_KEY
     if (!apiKey) {
-      console.error('API Key 未配置')
       return res.status(500).json({
         success: false,
-        message: 'API Key 未配置，请在 Vercel 环境变量中添加 DEEPSEEK_API_KEY'
+        message: 'API Key 未配置'
       })
     }
 
-    // 调用 DeepSeek API
-    const response = await axios.post('https://api.deepseek.com/v1/chat/completions', {
-      model: 'deepseek-chat',
+    // 调用火山引擎 API（OpenAI 兼容格式）
+    const response = await axios.post(API_CONFIG.baseUrl, {
+      model: API_CONFIG.model,
       messages: messageList,
       temperature: 0.7,
       max_tokens: 500
@@ -49,12 +55,11 @@ module.exports = async function handler(req, res) {
     })
 
   } catch (error) {
-    console.error('AI调用失败:', error.response?.status, error.response?.data || error.message)
+    console.error('AI调用失败:', error.response?.data || error.message)
     return res.status(500).json({
       success: false,
       message: 'AI服务暂时不可用',
-      error: error.message,
-      status: error.response?.status
+      error: error.response?.data?.error?.message || error.message
     })
   }
 }

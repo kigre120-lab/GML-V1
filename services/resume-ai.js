@@ -102,7 +102,7 @@ ${jd}`
         url: 'https://gml-v1-ddke.vercel.app/api/chat',
         method: 'POST',
         data: {
-          messages: [{ role: 'user', content: prompt }]
+          history: [{ role: 'user', content: prompt }]
         },
         header: {
           'Content-Type': 'application/json'
