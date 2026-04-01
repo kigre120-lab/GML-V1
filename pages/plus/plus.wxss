@@ -1,0 +1,472 @@
+/* pages/plus/plus.wxss */
+page {
+  background-color: #F7F8FA;
+}
+
+.container {
+  padding: 32rpx;
+  padding-bottom: 200rpx;
+  box-sizing: border-box;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+  margin-bottom: 32rpx;
+  box-sizing: border-box;
+}
+
+.section-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 8rpx;
+}
+
+.section-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #868E96;
+  margin-bottom: 32rpx;
+}
+
+/* 用户信息卡片 */
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.user-avatar {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(22, 93, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.user-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #212529;
+}
+
+.user-status {
+  font-size: 24rpx;
+  color: #868E96;
+  margin-top: 4rpx;
+}
+
+.times-badge {
+  text-align: center;
+  background: linear-gradient(135deg, rgba(22, 93, 255, 0.05) 0%, rgba(22, 93, 255, 0.1) 100%);
+  padding: 24rpx 32rpx;
+  border-radius: 16rpx;
+  min-width: 160rpx;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.times-label {
+  display: block;
+  font-size: 22rpx;
+  color: #868E96;
+}
+
+.times-value {
+  display: block;
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #165DFF;
+  line-height: 1.2;
+}
+
+.times-unit {
+  display: block;
+  font-size: 22rpx;
+  color: #165DFF;
+  margin-top: 4rpx;
+}
+
+/* 套餐网格 */
+.package-grid {
+  display: flex;
+  gap: 20rpx;
+}
+
+.package-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border: 2rpx solid #E5E7EB;
+  border-radius: 16rpx;
+  padding: 24rpx 12rpx;
+  min-height: 220rpx;
+  position: relative;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.package-card-active {
+  border-color: #165DFF;
+}
+
+.package-card:active {
+  transform: translateY(-4rpx);
+  box-shadow: 0 4rpx 24rpx rgba(22, 93, 255, 0.15);
+}
+
+.package-tag {
+  position: absolute;
+  top: -16rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #165DFF;
+  color: #FFFFFF;
+  font-size: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  white-space: nowrap;
+}
+
+.package-tag-orange {
+  background-color: #FF7D00;
+}
+
+.package-name {
+  font-size: 24rpx;
+  color: #868E96;
+  margin-top: 16rpx;
+}
+
+.package-price {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #212529;
+}
+
+.package-original {
+  font-size: 20rpx;
+  color: #868E96;
+  text-decoration: line-through;
+}
+
+.package-btn {
+  width: 100%;
+  text-align: center;
+  padding: 12rpx 0;
+  background-color: rgba(22, 93, 255, 0.1);
+  color: #165DFF;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.package-btn-primary {
+  background-color: #165DFF;
+  color: #FFFFFF;
+}
+
+/* 高端增值服务 */
+.premium-card {
+  display: flex;
+  gap: 24rpx;
+  background: linear-gradient(135deg, rgba(255, 125, 0, 0.05) 0%, rgba(255, 125, 0, 0.02) 100%);
+  border: 2rpx solid rgba(255, 125, 0, 0.2);
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 32rpx;
+  box-sizing: border-box;
+}
+
+.premium-icon-wrap {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background-color: rgba(255, 125, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.premium-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.premium-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.premium-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.premium-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #212529;
+  flex: 1;
+  margin-right: 16rpx;
+}
+
+.premium-price-wrap {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.premium-price {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #F53F3F;
+}
+
+.premium-original {
+  font-size: 20rpx;
+  color: #868E96;
+  text-decoration: line-through;
+}
+
+.premium-desc {
+  font-size: 24rpx;
+  color: #6B7280;
+  line-height: 1.6;
+  margin-bottom: 20rpx;
+}
+
+.premium-btn {
+  width: 100%;
+  text-align: center;
+  padding: 20rpx 0;
+  background-color: #F53F3F;
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.premium-btn:active {
+  opacity: 0.9;
+}
+
+/* 邀请福利 */
+.invite-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  background: linear-gradient(135deg, rgba(22, 93, 255, 0.05) 0%, rgba(22, 93, 255, 0.02) 100%);
+  border: 2rpx solid rgba(22, 93, 255, 0.2);
+  border-radius: 24rpx;
+  padding: 32rpx 40rpx;
+  margin-bottom: 32rpx;
+  box-sizing: border-box;
+}
+
+.invite-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: rgba(22, 93, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.invite-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.invite-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.invite-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 4rpx;
+}
+
+.invite-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #868E96;
+}
+
+.invite-btn {
+  padding: 16rpx 32rpx;
+  background-color: #165DFF;
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.invite-btn:active {
+  opacity: 0.9;
+}
+
+/* 求职交流群 */
+.group-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.group-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: rgba(0, 180, 42, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.group-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.group-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 4rpx;
+}
+
+.group-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #868E96;
+}
+
+.group-btn {
+  padding: 16rpx 32rpx;
+  background-color: #00B42A;
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-btn:active {
+  opacity: 0.9;
+}
+
+/* 二维码弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 64rpx;
+}
+
+.modal-card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 48rpx;
+  width: 100%;
+  max-width: 600rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.modal-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 16rpx;
+}
+
+.modal-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #868E96;
+  margin-bottom: 32rpx;
+}
+
+.qrcode-img {
+  width: 400rpx;
+  height: 400rpx;
+  margin: 0 auto 32rpx;
+  background-color: #F1F3F5;
+  border-radius: 16rpx;
+  display: block;
+}
+
+.modal-close-btn {
+  width: 100%;
+  padding: 24rpx 0;
+  background-color: #E5E7EB;
+  color: #212529;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.modal-close-btn:active {
+  opacity: 0.9;
+}

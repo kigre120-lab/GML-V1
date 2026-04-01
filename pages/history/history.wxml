@@ -1,0 +1,102 @@
+<!--pages/history/history.wxml-->
+<view class="container">
+  <!-- 操作栏 -->
+  <view class="action-bar">
+    <text class="action-title">历史面试记录</text>
+    <view class="action-btn" bindtap="startNewInterview">新建面试</view>
+  </view>
+
+  <!-- 历史面试列表 -->
+  <view class="history-list" wx:if="{{interviewList.length > 0}}">
+    <view class="history-card {{item.status === 'ongoing' ? 'history-card-active' : ''}}" wx:for="{{interviewList}}" wx:key="id">
+      <view class="history-header">
+        <text class="history-name">{{item.title}}</text>
+        <view class="history-status history-status-{{item.statusClass}}">
+          {{item.status === 'ongoing' ? '进行中' : item.score + '分'}}
+        </view>
+      </view>
+      <view class="history-footer">
+        <view class="history-meta">
+          <image class="history-meta-icon" src="{{item.status === 'ongoing' ? '/images/icons/question-circle.png' : '/images/icons/check-circle.png'}}" mode="aspectFit"></image>
+          <text>{{item.status === 'ongoing' ? '已答 ' + item.answered + '/' + item.total + '题' : '共答 ' + item.answered + '/' + item.total + '题'}}</text>
+        </view>
+        <view class="history-action" bindtap="{{item.status === 'ongoing' ? 'continueInterview' : 'viewInterviewDetail'}}" data-id="{{item.id}}">
+          {{item.status === 'ongoing' ? '继续面试' : '查看详情'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{interviewList.length === 0}}">
+    <view class="empty-icon-wrap">
+      <image class="empty-icon" src="/images/icons/history.png" mode="aspectFit"></image>
+    </view>
+    <text class="empty-title">暂无面试记录</text>
+    <text class="empty-desc">完成面试后，记录将显示在这里</text>
+    <view class="empty-btn" bindtap="startNewInterview">开始面试</view>
+  </view>
+
+  <!-- 需要强化的问列表 - 始终显示 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">需要强化的问题</text>
+      <text class="section-count" wx:if="{{questionList.length > 0}}">{{questionList.length}}题</text>
+    </view>
+    
+    <!-- 有收藏的问题列表 -->
+    <view class="question-list" wx:if="{{questionList.length > 0}}">
+      <view class="question-card" wx:for="{{questionList}}" wx:key="id">
+        <view class="question-content">
+          <text class="question-title">{{item.title}}</text>
+          <text class="question-desc">{{item.desc}}</text>
+          <view class="question-tags">
+            <text class="question-tag question-tag-{{item.tagClass}}">{{item.tag}}</text>
+          </view>
+        </view>
+        <view class="question-bookmark" bindtap="toggleBookmark" data-id="{{item.id}}">
+          <image class="bookmark-icon bookmark-active" src="/images/icons/bookmark.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+
+    <!-- 查看更多按钮 -->
+    <view class="view-more-btn" wx:if="{{questionList.length > 3}}" bindtap="viewAllQuestions">
+      查看全部
+      <image class="view-more-icon" src="/images/icons/chevron-down.png" mode="aspectFit"></image>
+    </view>
+
+    <!-- 无收藏时的示例提示 -->
+    <view class="question-empty" wx:if="{{questionList.length === 0}}">
+      <view class="question-example">
+        <view class="example-header">
+          <image class="example-icon" src="/images/icons/lightbulb.png" mode="aspectFit"></image>
+          <text class="example-title">示例：收藏的问题将显示在这里</text>
+        </view>
+        <view class="example-card">
+          <text class="example-question">请简述Java中的GC机制</text>
+          <text class="example-desc">在面试中遇到重要或困难的问题时，可以收藏起来针对性复习</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 付费提示弹窗 -->
+  <view class="modal-mask" wx:if="{{showPayModal}}" catchtouchmove="preventTouchMove">
+    <view class="modal-card">
+      <view class="modal-icon-wrap modal-icon-danger">
+        <image class="modal-icon" src="/images/icons/exclamation_circle.png" mode="aspectFit"></image>
+      </view>
+      <view class="modal-title">可用次数不足</view>
+      <view class="modal-desc">
+        当前剩余可用次数：<text class="text-danger">{{remainingTimes}}次</text>
+        请前往「加经验」页面购买更多权益
+      </view>
+      <view class="modal-tip">次数通用于：模拟面试 / 简历优化 / JD职位分析\n单次面试最多50题</view>
+      <view class="modal-btns">
+        <view class="modal-btn modal-btn-cancel" bindtap="closePayModal">稍后再说</view>
+        <view class="modal-btn modal-btn-confirm" bindtap="goToPlus">去购买</view>
+      </view>
+    </view>
+  </view>
+</view>

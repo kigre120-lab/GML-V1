@@ -1,0 +1,175 @@
+<!--pages/resume/resume.wxml-->
+<view class="container">
+  <!-- 职位需求分析 -->
+  <view class="section">
+    <view class="section-title">职位需求分析</view>
+    <view class="card">
+      <view class="card-header">
+        <view class="card-icon-wrap card-icon-warning">
+          <image class="card-icon" src="/images/icons/file_text.png" mode="aspectFit"></image>
+        </view>
+        <text class="card-title">JD匹配检查</text>
+      </view>
+      
+      <view class="card-desc">
+        先上传/粘贴目标职位描述（JD），AI将自动分析岗位要求，后续优化简历时会针对性调整内容，大幅提升通过率。
+      </view>
+      
+      <view class="jd-input-area">
+        <text class="input-label">粘贴职位描述（JD）</text>
+        <textarea 
+          class="jd-textarea" 
+          placeholder="请输入职位描述内容..." 
+          value="{{jdContent}}"
+          bindinput="onJdInput"
+          maxlength="2000"
+        ></textarea>
+      </view>
+      
+      <view class="btn-group">
+        <view class="btn btn-secondary" bindtap="clearJd">清空</view>
+        <view class="btn btn-primary {{isAnalyzing ? 'btn-loading' : ''}}" bindtap="analyzeJd">{{isAnalyzing ? '分析中...' : '分析匹配度'}}</view>
+      </view>
+      
+      <!-- JD分析结果展示区 -->
+      <view class="analysis-result" wx:if="{{jdAnalysisResult}}">
+        <view class="result-header">
+          <text class="result-title">分析结果</text>
+          <view class="match-score">
+            <text class="score-label">匹配度</text>
+            <text class="score-value">{{jdAnalysisResult.matchScore}}%</text>
+          </view>
+        </view>
+        <view class="result-section">
+          <text class="result-section-title">岗位关键词</text>
+          <view class="keyword-tags">
+            <text class="keyword-tag" wx:for="{{jdAnalysisResult.keywords}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+        <view class="result-section">
+          <text class="result-section-title">优化建议</text>
+          <view class="suggestion-list">
+            <view class="suggestion-item" wx:for="{{jdAnalysisResult.suggestions}}" wx:key="*this">
+              <text class="suggestion-dot">•</text>
+              <text class="suggestion-text">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上传新简历 -->
+  <view class="section">
+    <view class="section-title">上传简历</view>
+    <view class="upload-area" bindtap="uploadResume">
+      <view class="upload-icon-wrap">
+        <image class="upload-icon" src="/images/icons/cloud-upload.png" mode="aspectFit"></image>
+      </view>
+      <view class="upload-title">拖拽简历文件到此处上传</view>
+      <view class="upload-desc">支持 PDF, DOCX, TXT 格式，最大 5MB</view>
+      <view class="upload-btn">选择文件</view>
+    </view>
+  </view>
+
+  <!-- AI简历优化 -->
+  <view class="section">
+    <view class="card">
+      <view class="card-header">
+        <view class="card-icon-wrap card-icon-primary">
+          <image class="card-icon" src="/images/icons/robot.png" mode="aspectFit"></image>
+        </view>
+        <view class="card-title-group">
+          <text class="card-title">AI简历优化</text>
+          <text class="card-subtitle">智能优化简历，提升通过率</text>
+        </view>
+      </view>
+
+      <!-- JD关联提示 -->
+      <view class="jd-tip" wx:if="{{!jdAnalysisResult}}">
+        <image class="jd-tip-icon" src="/images/icons/lightbulb.png" mode="aspectFit"></image>
+        <text>完成JD职位分析后，将为您针对性提供简历优化建议</text>
+      </view>
+      
+      <!-- 已完成JD分析提示 -->
+      <view class="jd-tip jd-tip-success" wx:if="{{jdAnalysisResult}}">
+        <image class="jd-tip-icon" src="/images/icons/check-circle.png" mode="aspectFit"></image>
+        <text>已完成JD分析，优化将针对性匹配岗位要求</text>
+      </view>
+      
+      <view class="feature-list">
+        <view class="feature-item">
+          <image class="feature-check" src="/images/icons/check-circle.png" mode="aspectFit"></image>
+          <text>生成更具竞争力的简历内容</text>
+        </view>
+        <view class="feature-item">
+          <image class="feature-check" src="/images/icons/check-circle.png" mode="aspectFit"></image>
+          <text>深度对齐岗位要求，精准匹配JD关键词</text>
+        </view>
+        <view class="feature-item">
+          <image class="feature-check" src="/images/icons/check-circle.png" mode="aspectFit"></image>
+          <text>突出核心技能和项目亮点，弱化经验短板</text>
+        </view>
+      </view>
+      
+      <!-- 剩余次数展示 -->
+      <view class="times-card">
+        <view class="times-left">
+          <image class="times-icon" src="/images/icons/coins.png" mode="aspectFit"></image>
+          <view class="times-info">
+            <view class="times-text">剩余可用次数：<text class="times-num">{{remainingTimes}}次</text></view>
+            <view class="times-tip">通用于：模拟面试 / 简历优化 / JD分析</view>
+          </view>
+        </view>
+        <view class="times-buy" bindtap="goToPlus">购买更多</view>
+      </view>
+      
+      <view class="btn btn-primary btn-full {{isOptimizing ? 'btn-loading' : ''}}" bindtap="optimizeResume">{{isOptimizing ? '优化中...' : '开始优化简历'}}</view>
+      
+      <!-- 简历优化结果展示区 -->
+      <view class="optimize-result" wx:if="{{optimizeResult}}">
+        <view class="result-header">
+          <text class="result-title">优化完成</text>
+          <text class="result-time">{{optimizeResult.time}}</text>
+        </view>
+        <view class="result-section">
+          <text class="result-section-title">主要优化项</text>
+          <view class="optimize-list">
+            <view class="optimize-item" wx:for="{{optimizeResult.items}}" wx:key="*this">
+              <image class="optimize-icon" src="/images/icons/check-circle.png" mode="aspectFit"></image>
+              <text class="optimize-text">{{item}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="result-actions">
+          <view class="result-btn" bindtap="viewOptimizedResume">查看优化后的简历</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史简历版本 -->
+  <view class="section" wx:if="{{resumeList.length > 0}}">
+    <view class="section-title">历史版本</view>
+    
+    <view class="history-list">
+      <view class="history-item" wx:for="{{resumeList}}" wx:key="id">
+        <view class="history-icon-wrap">
+          <image class="history-icon" src="{{item.type === 'pdf' ? '/images/icons/file-pdf.png' : '/images/icons/file-word.png'}}" mode="aspectFit"></image>
+        </view>
+        <view class="history-info">
+          <view class="history-name">{{item.name}}</view>
+          <view class="history-meta">{{item.date}} · {{item.size}}</view>
+        </view>
+        <view class="history-actions">
+          <view class="history-btn" bindtap="downloadResume" data-id="{{item.id}}">
+            <image class="history-action-icon" src="/images/icons/download.png" mode="aspectFit"></image>
+          </view>
+          <view class="history-btn" bindtap="deleteResume" data-id="{{item.id}}">
+            <image class="history-action-icon" src="/images/icons/trash.png" mode="aspectFit"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

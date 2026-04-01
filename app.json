@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/interview/interview",
+    "pages/resume/resume",
+    "pages/history/history",
+    "pages/plus/plus"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "AI面试助手",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F7F8FA"
+  },
+  "tabBar": {
+    "color": "#868E96",
+    "selectedColor": "#165DFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/interview/interview",
+        "text": "面试",
+        "iconPath": "images/icons/interview.png",
+        "selectedIconPath": "images/icons/interview-active.png"
+      },
+      {
+        "pagePath": "pages/resume/resume",
+        "text": "简历",
+        "iconPath": "images/icons/resume.png",
+        "selectedIconPath": "images/icons/resume-active.png"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "历史",
+        "iconPath": "images/icons/history.png",
+        "selectedIconPath": "images/icons/history-active.png"
+      },
+      {
+        "pagePath": "pages/plus/plus",
+        "text": "加经验",
+        "iconPath": "images/icons/plus.png",
+        "selectedIconPath": "images/icons/plus-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

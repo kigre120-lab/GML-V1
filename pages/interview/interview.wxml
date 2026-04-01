@@ -1,0 +1,241 @@
+<!--pages/interview/interview.wxml-->
+<view class="container">
+  <!-- 微信授权登录弹窗 -->
+  <view class="modal-mask" wx:if="{{showAuthModal}}" catchtouchmove="preventTouchMove">
+    <view class="modal-card">
+      <view class="modal-icon-wrap">
+        <image class="modal-icon" src="/images/icons/user_lock.png" mode="aspectFit"></image>
+      </view>
+      <view class="modal-title">申请使用你的微信头像、昵称</view>
+      <view class="modal-desc">用于个性化展示你的头像和昵称，提升使用体验，我们不会泄露你的个人信息</view>
+      <view class="modal-btns">
+        <view class="modal-btn modal-btn-cancel" bindtap="refuseAuth">拒绝</view>
+        <view class="modal-btn modal-btn-confirm" bindtap="confirmAuth">允许</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 初始选择界面 -->
+  <view class="init-page" wx:if="{{!isInterviewing}}">
+    <view class="card main-card">
+      <view class="header-section">
+        <view class="header-icon-wrap">
+          <image class="header-icon" src="/images/icons/graduate.png" mode="aspectFit"></image>
+        </view>
+        <view class="header-title">AI模拟面试</view>
+        <view class="header-desc">选择面试方式，开始提升你的面试能力</view>
+      </view>
+      
+      <view class="option-list">
+        <!-- 选项1：选岗位直接面试 -->
+        <view class="option-card" bindtap="showPositionSelect">
+          <view class="option-icon-wrap option-icon-primary">
+            <image class="option-icon" src="/images/icons/briefcase.png" mode="aspectFit"></image>
+          </view>
+          <view class="option-content">
+            <view class="option-title">选择岗位直接面试</view>
+            <view class="option-desc">基于常见岗位题库出题</view>
+          </view>
+          <image class="option-arrow" src="/images/icons/chevron_right.png" mode="aspectFit"></image>
+        </view>
+
+        <!-- 选项2：上传JD分析 -->
+        <view class="option-card" bindtap="showJdInput">
+          <view class="option-icon-wrap option-icon-orange">
+            <image class="option-icon" src="/images/icons/file_text.png" mode="aspectFit"></image>
+          </view>
+          <view class="option-content">
+            <view class="option-title">上传JD针对性面试</view>
+            <view class="option-desc">AI基于JD自动匹配出题</view>
+          </view>
+          <image class="option-arrow" src="/images/icons/chevron_right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+
+    <!-- 岗位选择区域 -->
+    <view class="card position-card" wx:if="{{showPositionArea}}">
+      <view class="section-title">选择面试岗位</view>
+      <scroll-view class="position-list" scroll-y enhanced show-scrollbar="{{false}}">
+        <!-- 技术类 -->
+        <view class="position-category">技术类</view>
+        <view 
+          class="position-item {{currentPosition === item ? 'position-item-active' : ''}}" 
+          wx:for="{{techPositions}}" 
+          wx:key="*this" 
+          bindtap="selectPosition"
+          data-position="{{item}}"
+        >
+          <text class="position-text">{{item}}</text>
+          <image wx:if="{{currentPosition === item}}" class="position-check" src="/images/icons/check.png" mode="aspectFit"></image>
+        </view>
+        
+        <!-- 产品/设计类 -->
+        <view class="position-category">产品/设计类</view>
+        <view 
+          class="position-item {{currentPosition === item ? 'position-item-active' : ''}}" 
+          wx:for="{{productPositions}}" 
+          wx:key="*this" 
+          bindtap="selectPosition"
+          data-position="{{item}}"
+        >
+          <text class="position-text">{{item}}</text>
+          <image wx:if="{{currentPosition === item}}" class="position-check" src="/images/icons/check.png" mode="aspectFit"></image>
+        </view>
+        
+        <!-- 运营/市场类 -->
+        <view class="position-category">运营/市场类</view>
+        <view 
+          class="position-item {{currentPosition === item ? 'position-item-active' : ''}}" 
+          wx:for="{{operationPositions}}" 
+          wx:key="*this" 
+          bindtap="selectPosition"
+          data-position="{{item}}"
+        >
+          <text class="position-text">{{item}}</text>
+          <image wx:if="{{currentPosition === item}}" class="position-check" src="/images/icons/check.png" mode="aspectFit"></image>
+        </view>
+        
+        <!-- 职能/其他 -->
+        <view class="position-category">职能/其他</view>
+        <view 
+          class="position-item {{currentPosition === item ? 'position-item-active' : ''}}" 
+          wx:for="{{otherPositions}}" 
+          wx:key="*this" 
+          bindtap="selectPosition"
+          data-position="{{item}}"
+        >
+          <text class="position-text">{{item}}</text>
+          <image wx:if="{{currentPosition === item}}" class="position-check" src="/images/icons/check.png" mode="aspectFit"></image>
+        </view>
+      </scroll-view>
+      <view class="start-btn" bindtap="startInterview">开始面试</view>
+    </view>
+
+    <!-- JD输入区域 -->
+    <view class="card jd-card" wx:if="{{showJdArea}}">
+      <view class="section-title">粘贴职位描述(JD)</view>
+      <textarea 
+        class="jd-textarea" 
+        placeholder="粘贴完整JD后AI将针对性出题" 
+        value="{{jdContent}}"
+        bindinput="onJdInput"
+        maxlength="2000"
+      ></textarea>
+      <view class="start-btn" bindtap="startJdInterview">开始针对性面试</view>
+    </view>
+  </view>
+
+  <!-- 面试聊天区域 -->
+  <view class="chat-page" wx:if="{{isInterviewing}}">
+    <!-- 顶部工具栏 -->
+    <view class="chat-header">
+      <view class="chat-header-left" bindtap="exitInterview">
+        <image class="chat-header-icon" src="/images/icons/arrow_left.png" mode="aspectFit"></image>
+        <text class="chat-header-text">退出</text>
+      </view>
+      <view class="chat-header-center">
+        <text class="chat-header-title">第 {{questionCount}}/{{maxQuestion}} 题</text>
+      </view>
+      <view class="chat-header-right"></view>
+    </view>
+    
+    <!-- 消息列表 -->
+    <scroll-view 
+      class="message-container" 
+      scroll-y 
+      scroll-into-view="{{scrollToView}}"
+      scroll-with-animation
+      enhanced
+      show-scrollbar="{{false}}"
+    >
+      <view class="message-list">
+        <view wx:for="{{messages}}" wx:key="id" class="message-item">
+          <!-- AI消息 -->
+          <view class="chat-bubble ai" wx:if="{{item.type === 'ai'}}">
+            <view class="bubble-content">{{item.content}}</view>
+          </view>
+          <!-- 用户消息 -->
+          <view class="chat-bubble user" wx:if="{{item.type === 'user'}}">
+            <view class="bubble-content">{{item.content}}</view>
+          </view>
+          <!-- 打字指示器 -->
+          <view class="chat-bubble ai" wx:if="{{item.type === 'typing'}}">
+            <view class="typing-indicator">
+              <text class="typing-dot"></text>
+              <text class="typing-dot"></text>
+              <text class="typing-dot"></text>
+            </view>
+          </view>
+        </view>
+        <!-- 底部锚点 -->
+        <view id="msg-bottom"></view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 付费提示弹窗 -->
+  <view class="modal-mask" wx:if="{{showPayModal}}" catchtouchmove="preventTouchMove">
+    <view class="modal-card">
+      <view class="modal-icon-wrap modal-icon-danger">
+        <image class="modal-icon" src="/images/icons/exclamation_circle.png" mode="aspectFit"></image>
+      </view>
+      <view class="modal-title">可用次数不足</view>
+      <view class="modal-desc">
+        当前剩余可用次数：<text class="text-danger">{{remainingTimes}}次</text>
+        请前往「加经验」页面购买更多权益
+      </view>
+      <view class="modal-tip">次数通用于：模拟面试 / 简历优化 / JD职位分析\n单次面试最多50题</view>
+      <view class="modal-btns">
+        <view class="modal-btn modal-btn-cancel" bindtap="closePayModal">稍后再说</view>
+        <view class="modal-btn modal-btn-confirm" bindtap="goToPlus">去购买</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部输入区域 -->
+  <view class="input-area" wx:if="{{isInterviewing && !interviewFinished}}">
+    <view class="input-wrapper">
+      <!-- 语音/键盘切换按钮 -->
+      <view class="switch-btn" bindtap="toggleInputMode">
+        <image class="switch-icon" src="{{isVoiceMode ? '/images/icons/keyboard.png' : '/images/icons/microphone.png'}}" mode="aspectFit"></image>
+      </view>
+
+      <!-- 文字输入模式 -->
+      <view class="input-box" wx:if="{{!isVoiceMode}}">
+        <textarea 
+          class="input-textarea" 
+          placeholder="请输入你的回答..." 
+          value="{{inputText}}"
+          bindinput="onInputChange"
+          bindconfirm="sendMessage"
+          adjust-position="{{true}}"
+          cursor-spacing="20"
+          maxlength="1000"
+        ></textarea>
+      </view>
+      
+      <!-- 语音输入模式 -->
+      <view 
+        class="voice-btn {{isRecording ? 'voice-btn-recording' : ''}}" 
+        wx:if="{{isVoiceMode}}"
+        bindtouchstart="startRecording"
+        bindtouchend="stopRecording"
+        bindlongpress="cancelRecording"
+      >
+        {{isRecording ? '松开结束' : '按住 说话'}}
+      </view>
+
+      <!-- 发送按钮 -->
+      <view class="send-btn {{inputText ? 'send-btn-active' : 'send-btn-disabled'}}" bindtap="sendMessage">
+        发送
+      </view>
+    </view>
+  </view>
+
+  <!-- 面试结束操作区 -->
+  <view class="finish-area" wx:if="{{isInterviewing && interviewFinished}}">
+    <view class="finish-btn finish-btn-primary" bindtap="resetInterview">重新开始</view>
+    <view class="finish-btn finish-btn-secondary" bindtap="exitInterview">返回首页</view>
+  </view>
+</view>
