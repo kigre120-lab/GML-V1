@@ -41,7 +41,7 @@ Page({
   },
 
   // 分析JD匹配度
-  analyzeJd() {
+  analyzeJd: async function() {
     if (!this.data.jdContent.trim()) {
       wx.showToast({
         title: '请输入职位描述',
