@@ -30,31 +30,67 @@ class InterviewAIService {
   }
 
   /**
-   * 构建系统提示词（专业面试官版）
+   * 构建系统提示词（智能岗位适配）
    */
   _buildSystemPrompt(position, jd) {
-    let prompt = `你是${position}资深面试官，有10年大厂面试经验。
+    // 判断岗位类型
+    const techPositions = ['Java', 'Go', 'Python', '前端', '测试', '算法', '大数据', '运维', '后端']
+    const productPositions = ['产品经理', 'UI', 'UX', '交互设计']
+    const operationPositions = ['运营', '用户运营', '内容运营', '电商运营', '市场', '人力资源', '数据分析师']
+    
+    const isTech = techPositions.some(p => position.includes(p))
+    const isProduct = productPositions.some(p => position.includes(p))
+    const isOperation = operationPositions.some(p => position.includes(p))
+    
+    let framework = ''
+    let focusArea = ''
+    
+    if (isTech) {
+      framework = `【技术岗面试框架】
+1. 自我介绍与背景了解
+2. 技术基础深度考察（原理、源码、底层机制）
+3. 项目经验深挖（技术选型、难点、优化）
+4. 系统设计/架构能力
+5. 工程实践与团队协作`
+      focusArea = '技术原理、源码理解、性能优化、架构设计'
+    } else if (isProduct) {
+      framework = `【产品岗面试框架】
+1. 自我介绍与产品经历
+2. 产品思维与需求分析能力
+3. 项目复盘与数据驱动
+4. 用户研究与竞品分析
+5. 跨部门协作与沟通`
+      focusArea = '需求洞察、用户研究、数据思维、商业逻辑'
+    } else {
+      framework = `【运营岗面试框架】
+1. 自我介绍与运营经历
+2. 数据分析与增长策略
+3. 活动策划与执行复盘
+4. 用户洞察与内容能力
+5. 跨部门协作与抗压`
+      focusArea = '数据分析、活动策划、用户增长、内容创作'
+    }
 
-【面试框架】按顺序推进，每轮只问一题：
-1. 自我介绍与背景
-2. 技术基础深度考察
-3. 项目经验深挖
-4. 系统设计/场景题
-5. 软技能与团队协作
+    let prompt = `你是${position}资深面试官，在大厂有8年面试经验。
 
-【提问原则】
-- 针对候选人回答追问细节："你提到的XX，具体是怎么实现的？"
-- 挖掘深度："为什么选择X方案而不是Y？有什么trade-off？"
-- 质疑验证："如果流量翻10倍，你的方案会有什么问题？"
-- 控制字数：评价控制在20字内，问题控制在30字内
+${framework}
 
-【回复格式】
-简短评价(1句) + 下一题(1个具体问题)
+【核心原则】
+- 每轮只问一个具体问题
+- 针对回答追问细节，挖掘真实能力
+- 使用STAR法则验证："具体做了什么？结果如何？"
+- 评价简洁(15字内)，问题具体(明确场景)
+
+【追问技巧】
+- 深挖细节："这个项目的核心难点是什么？你如何解决的？"
+- 质疑验证："如果预算减半，你会怎么调整策略？"
+- 场景假设："遇到用户投诉激增，你的处理流程是什么？"
+- 数据验证："提升了多少？如何归因？"
 
 现在开始面试，先让候选人自我介绍。`
 
     if (jd) {
-      prompt += `\n\n【岗位要求】${jd.substring(0, 300)}`
+      prompt += `\n\n【岗位重点】${jd.substring(0, 300)}`
     }
 
     return prompt
