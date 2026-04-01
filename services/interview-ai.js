@@ -98,19 +98,16 @@ class InterviewAIService {
   async _callBackendAPI() {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'https://your-backend.com/api/interview/chat',
+        url: 'https://gml-v1-ddke.vercel.app/api/chat',
         method: 'POST',
         data: {
-          position: this.position,
-          questionCount: this.questionCount,
           history: this.conversationHistory
         },
         header: {
-          'Authorization': `Bearer ${wx.getStorageSync('token')}`,
           'Content-Type': 'application/json'
         },
         success: (res) => {
-          if (res.statusCode === 200) {
+          if (res.statusCode === 200 && res.data.success) {
             resolve(res.data.content)
           } else {
             reject(new Error(res.data.message || 'API调用失败'))

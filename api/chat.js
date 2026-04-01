@@ -3,8 +3,8 @@
 
 const axios = require('axios')
 
-export default async function handler(req, res) {
-  // 跨域设置
+module.exports = async function handler(req, res) {
+  // 允许跨域
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -18,12 +18,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { history, position, questionCount } = req.body
+    const { history, messages } = req.body
+    
+    // 支持两种参数格式
+    const messageList = history || messages || []
 
     // 调用 DeepSeek API
     const response = await axios.post('https://api.deepseek.com/v1/chat/completions', {
       model: 'deepseek-chat',
-      messages: history,
+      messages: messageList,
       temperature: 0.7,
       max_tokens: 500
     }, {
@@ -42,7 +45,8 @@ export default async function handler(req, res) {
     console.error('AI调用失败:', error.response?.data || error.message)
     return res.status(500).json({
       success: false,
-      message: 'AI服务暂时不可用'
+      message: 'AI服务暂时不可用',
+      error: error.message
     })
   }
 }

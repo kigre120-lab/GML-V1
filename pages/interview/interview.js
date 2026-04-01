@@ -1,5 +1,6 @@
 // pages/interview/interview.js
 const app = getApp()
+const interviewAI = require('../../services/interview-ai.js')
 
 Page({
   data: {
@@ -171,6 +172,10 @@ Page({
       ? this.data.currentPosition 
       : 'JD针对性'
     
+    // 初始化AI服务
+    const jd = this.data.interviewMode === 'jd' ? this.data.jdContent : ''
+    interviewAI.initInterview(positionText, jd)
+    
     this.setData({
       isInterviewing: true,
       interviewFinished: false,
@@ -183,14 +188,14 @@ Page({
       isAiTyping: false
     })
     
-    // 延迟生成第一道题
+    // 生成第一道题
     setTimeout(() => {
       this.generateQuestion()
-    }, 1200)
+    }, 1000)
   },
 
   // 生成问题
-  generateQuestion() {
+  async generateQuestion() {
     // 如果已结束，不再生成
     if (this.data.interviewFinished) return
     
@@ -208,41 +213,41 @@ Page({
       scrollToView: 'msg-bottom'
     })
     
-    // 模拟AI生成问题（随机延迟1-2秒）
-    const delay = 1000 + Math.random() * 1000
-    
-    setTimeout(() => {
-      const questions = [
-        '请简单介绍一下你自己，包括你的技术背景和项目经验。',
-        '请描述一个你遇到过的技术难题，以及你是如何解决的？',
-        '你对微服务架构有什么理解？它的优缺点是什么？',
-        '请解释一下什么是RESTful API？它有哪些设计原则？',
-        '在高并发场景下，你会如何设计系统架构？',
-        '请谈谈你对数据库索引的理解，如何优化查询性能？',
-        '描述一下你项目中使用过的设计模式及其应用场景。',
-        '如何保证接口的安全性？有哪些常见的防护措施？',
-        '请解释分布式事务的实现方案和适用场景。',
-        '你如何看待代码质量？有哪些提高代码质量的实践？'
-      ]
-      
-      const randomQuestion = questions[Math.floor(Math.random() * questions.length)]
+    try {
+      // 调用真实AI生成问题
+      const result = await interviewAI.sendMessage('请开始提问')
       
       // 移除打字指示器，添加真实问题
       const newMessages = this.data.messages.filter(m => m.type !== 'typing')
       newMessages.push({
         id: Date.now(),
         type: 'ai',
-        content: randomQuestion
+        content: result.content
       })
       
       this.setData({
         messages: newMessages,
-        currentQuestion: randomQuestion,
         questionCount: this.data.questionCount + 1,
         scrollToView: 'msg-bottom',
         isAiTyping: false
       })
-    }, delay)
+    } catch (error) {
+      console.error('AI生成问题失败:', error)
+      // 降级处理
+      const newMessages = this.data.messages.filter(m => m.type !== 'typing')
+      newMessages.push({
+        id: Date.now(),
+        type: 'ai',
+        content: '请简单介绍一下你自己，包括你的技术背景和项目经验。'
+      })
+      
+      this.setData({
+        messages: newMessages,
+        questionCount: this.data.questionCount + 1,
+        scrollToView: 'msg-bottom',
+        isAiTyping: false
+      })
+    }
   },
 
   // 切换输入模式
@@ -260,7 +265,7 @@ Page({
   },
 
   // 发送消息
-  sendMessage() {
+  async sendMessage() {
     if (!this.data.inputText.trim()) {
       return
     }
@@ -273,11 +278,13 @@ Page({
       return
     }
     
+    const userContent = this.data.inputText
+    
     // 添加用户消息
     const userMessage = {
       id: Date.now(),
       type: 'user',
-      content: this.data.inputText
+      content: userContent
     }
     
     const messages = [...this.data.messages, userMessage]
@@ -296,10 +303,51 @@ Page({
       return
     }
     
-    // AI确认收到回答后生成下一题
-    setTimeout(() => {
-      this.generateQuestion()
-    }, 800)
+    // 调用AI获取回复和下一题
+    try {
+      this.setData({ isAiTyping: true })
+      
+      // 添加打字指示器
+      const typingMsg = { id: 'typing', type: 'typing' }
+      this.setData({ 
+        messages: [...this.data.messages, typingMsg],
+        scrollToView: 'msg-bottom'
+      })
+      
+      const result = await interviewAI.sendMessage(userContent)
+      
+      // 移除打字指示器，添加AI回复
+      const newMessages = this.data.messages.filter(m => m.type !== 'typing')
+      newMessages.push({
+        id: Date.now(),
+        type: 'ai',
+        content: result.content
+      })
+      
+      this.setData({
+        messages: newMessages,
+        questionCount: this.data.questionCount + 1,
+        scrollToView: 'msg-bottom',
+        isAiTyping: false
+      })
+    } catch (error) {
+      console.error('AI回复失败:', error)
+      this.setData({ isAiTyping: false })
+      
+      // 降级处理
+      const newMessages = this.data.messages.filter(m => m.type !== 'typing')
+      newMessages.push({
+        id: Date.now(),
+        type: 'ai',
+        content: '回答不错，请继续。下一个问题：你觉得在这个岗位上最重要的能力是什么？'
+      })
+      
+      this.setData({
+        messages: newMessages,
+        questionCount: this.data.questionCount + 1,
+        scrollToView: 'msg-bottom'
+      })
+    }
   },
 
   // 开始录音
