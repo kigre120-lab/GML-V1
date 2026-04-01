@@ -41,7 +41,8 @@ module.exports = async function handler(req, res) {
       model: API_CONFIG.model,
       messages: messageList,
       temperature: 0.7,
-      max_tokens: 500
+      max_tokens: 200,
+      stream: false
     }, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
