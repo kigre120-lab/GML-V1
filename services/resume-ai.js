@@ -94,12 +94,12 @@ ${jd}`
   }
 
   /**
-   * 调用后端API
+   * 调用后端API（腾讯云函数）
    */
   async _callBackendAPI(prompt) {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'https://gml-v1-ddke.vercel.app/api/chat',
+        url: 'https://1412613722-havm9js1z3.ap-guangzhou.tencentscf.com',
         method: 'POST',
         data: {
           history: [{ role: 'user', content: prompt }]

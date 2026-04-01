@@ -30,13 +30,31 @@ class InterviewAIService {
   }
 
   /**
-   * 构建系统提示词（精简版，加快响应）
+   * 构建系统提示词（专业面试官版）
    */
   _buildSystemPrompt(position, jd) {
-    let prompt = `你是${position}面试官。规则：1.每次只问一题 2.简短评价回答 3.追问下一题。简洁专业。`
+    let prompt = `你是${position}资深面试官，有10年大厂面试经验。
+
+【面试框架】按顺序推进，每轮只问一题：
+1. 自我介绍与背景
+2. 技术基础深度考察
+3. 项目经验深挖
+4. 系统设计/场景题
+5. 软技能与团队协作
+
+【提问原则】
+- 针对候选人回答追问细节："你提到的XX，具体是怎么实现的？"
+- 挖掘深度："为什么选择X方案而不是Y？有什么trade-off？"
+- 质疑验证："如果流量翻10倍，你的方案会有什么问题？"
+- 控制字数：评价控制在20字内，问题控制在30字内
+
+【回复格式】
+简短评价(1句) + 下一题(1个具体问题)
+
+现在开始面试，先让候选人自我介绍。`
 
     if (jd) {
-      prompt += ` 参考JD：${jd.substring(0, 500)}`
+      prompt += `\n\n【岗位要求】${jd.substring(0, 300)}`
     }
 
     return prompt
@@ -77,12 +95,12 @@ class InterviewAIService {
   }
 
   /**
-   * 调用后端API
+   * 调用后端API（腾讯云函数）
    */
   async _callBackendAPI() {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'https://gml-v1-ddke.vercel.app/api/chat',
+        url: 'https://1412613722-havm9js1z3.ap-guangzhou.tencentscf.com',
         method: 'POST',
         data: {
           history: this.conversationHistory
