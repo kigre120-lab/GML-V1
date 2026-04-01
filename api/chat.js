@@ -1,5 +1,4 @@
 // Vercel Serverless Function - 面试对话接口
-// 访问地址：https://your-app.vercel.app/api/chat
 
 const axios = require('axios')
 
@@ -19,9 +18,17 @@ module.exports = async function handler(req, res) {
 
   try {
     const { history, messages } = req.body
-    
-    // 支持两种参数格式
     const messageList = history || messages || []
+
+    // 检查 API Key
+    const apiKey = process.env.DEEPSEEK_API_KEY
+    if (!apiKey) {
+      console.error('API Key 未配置')
+      return res.status(500).json({
+        success: false,
+        message: 'API Key 未配置，请在 Vercel 环境变量中添加 DEEPSEEK_API_KEY'
+      })
+    }
 
     // 调用 DeepSeek API
     const response = await axios.post('https://api.deepseek.com/v1/chat/completions', {
@@ -31,7 +38,7 @@ module.exports = async function handler(req, res) {
       max_tokens: 500
     }, {
       headers: {
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       }
     })
@@ -42,12 +49,12 @@ module.exports = async function handler(req, res) {
     })
 
   } catch (error) {
-    console.error('AI调用失败:', error.response?.data || error.message)
+    console.error('AI调用失败:', error.response?.status, error.response?.data || error.message)
     return res.status(500).json({
       success: false,
       message: 'AI服务暂时不可用',
-      error: error.message
+      error: error.message,
+      status: error.response?.status
     })
   }
 }
-// redeploy
